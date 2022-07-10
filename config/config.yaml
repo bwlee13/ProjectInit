@@ -1,0 +1,9 @@
+local:
+  cors_origins: ["http://localhost", "http://localhost:8080", "http://localhost:8080/docs"]
+
+  logging:
+    LOCAL_CONSOLE: DEBUG
+    LOCAL_FIL: None
+    HUMIO: None
+    NAS_FILE: None
+
