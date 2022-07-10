@@ -4,16 +4,12 @@ import os
 import json
 from decimal import Decimal
 from pprint import pprint
-"""
-Must download java runtime
-AWS CLI
-"""
+from loguru import logger
+
+dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
 
 
 def load_data(devices, dynamodb=None):
-    dynamodb = boto3.resource(
-        'dynamodb', endpoint_url="http://localhost:8000")
-
     devices_table = dynamodb.Table('Devices')
     # Loop through all the items and load each
     for device in devices:
@@ -60,6 +56,29 @@ def create_devices_table(dynamodb=None):
     return table
 
 
+def create_user_table():
+    table_name = 'Users'
+    params = {
+        'TableName': table_name,
+        'KeySchema': [
+            {'AttributeName': 'partition_key', 'KeyType': 'HASH'},
+            {'AttributeName': 'sort_key', 'KeyType': 'RANGE'}
+        ],
+        'AttributeDefinitions': [
+            {'AttributeName': 'partition_key', 'AttributeType': 'N'},
+            {'AttributeName': 'sort_key', 'AttributeType': 'N'}
+        ],
+        'ProvisionedThroughput': {
+            'ReadCapacityUnits': 10,
+            'WriteCapcityUnits': 10
+        },
+    }
+    table = dynamodb.create_table(**params)
+    logger.info(f"Creating table: {table_name}")
+    table.wait_until_exists()
+    return table
+
+
 def put_device(device_id, datacount, timestamp, temperature1, temperature2, temperature3, temperature4, temperature5, dynamodb=None):
     dynamodb = boto3.resource(
         'dynamodb', endpoint_url="http://localhost:8000")
@@ -83,9 +102,7 @@ def put_device(device_id, datacount, timestamp, temperature1, temperature2, temp
     return response
 
 
-def get_device(device_id, datacount, dynamodb=None):
-    dynamodb = boto3.resource(
-        'dynamodb', endpoint_url="http://localhost:8000")
+def get_device(device_id, datacount):
     # Specify the table to read from
     devices_table = dynamodb.Table('Devices')
 
@@ -98,7 +115,7 @@ def get_device(device_id, datacount, dynamodb=None):
         return response['Item']
 
 
-def scan_devices(dynamodb=None):
+def scan_devices():
     dynamodb = boto3.resource(
         'dynamodb', endpoint_url="http://localhost:8000")
     # Specify the table to scan
@@ -111,7 +128,6 @@ def scan_devices(dynamodb=None):
         response = devices_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
         items.extend(response['Items'])
     print(items)
-
 
 
 if __name__ == '__main__':
