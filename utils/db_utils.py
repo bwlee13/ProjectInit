@@ -5,19 +5,26 @@ import json
 from decimal import Decimal
 from pprint import pprint
 from loguru import logger
+import pandas as pd
+
 
 dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
 
 
-def load_data(devices, dynamodb=None):
-    devices_table = dynamodb.Table('Devices')
+def load_data(users):
+    devices_table = dynamodb.Table('Users')
     # Loop through all the items and load each
-    for device in devices:
-        device_id = (device['device_id'])
-        datacount = device['datacount']
+    for user in users:
+        userId = (user['userId'])
+        firstName = user['firstName']
+        lastName = user['lastName']
+        bookList = user['bookList']
+        followerList = user['followerList']
+        follwingList = user['followingList']
+        acctData = user['acctData']
         # Print device info
-        print("Loading Devices Data:", device_id, datacount)
-        devices_table.put_item(Item=device)
+        print("Loading Devices Data:", userId, firstName, lastName, bookList, followerList, follwingList, acctData )
+        devices_table.put_item(Item=user)
 
 
 def create_devices_table(dynamodb=None):
@@ -58,22 +65,26 @@ def create_devices_table(dynamodb=None):
 
 def create_user_table():
     table_name = 'Users'
-    params = {
-        'TableName': table_name,
-        'KeySchema': [
-            {'AttributeName': 'partition_key', 'KeyType': 'HASH'},
-            {'AttributeName': 'sort_key', 'KeyType': 'RANGE'}
+    table = dynamodb.create_table(
+        TableName='Users',
+        KeySchema=[
+            {'AttributeName': 'userId', 'KeyType': 'HASH'},
         ],
-        'AttributeDefinitions': [
-            {'AttributeName': 'partition_key', 'AttributeType': 'N'},
-            {'AttributeName': 'sort_key', 'AttributeType': 'N'}
+        AttributeDefinitions=[
+            {'AttributeName': 'userId', 'AttributeType': 'S'},
+            # {'AttributeName': 'firstName', 'AttributeType': 'S'},
+            # {'AttributeName': 'lastName', 'AttributeType': 'S'},
+            # {'AttributeName': 'bookList', 'AttributeType': 'S'},
+            # {'AttributeName': 'followerList', 'AttributeType': 'S'},
+            # {'AttributeName': 'follwingList', 'AttributeType': 'S'},
+            # {'AttributeName': 'acctData', 'AttributeType': 'S'},
+
         ],
-        'ProvisionedThroughput': {
+        ProvisionedThroughput={
             'ReadCapacityUnits': 10,
-            'WriteCapcityUnits': 10
+            'WriteCapacityUnits': 10
         },
-    }
-    table = dynamodb.create_table(**params)
+    )
     logger.info(f"Creating table: {table_name}")
     table.wait_until_exists()
     return table
@@ -115,11 +126,23 @@ def get_device(device_id, datacount):
         return response['Item']
 
 
+def get_user_account(user_id):
+    # Specify the table to read from
+    user_table = dynamodb.Table('Users')
+    try:
+        response = user_table.get_item(
+            Key={'userId': user_id})
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    else:
+        return response['Item']
+
+
 def scan_devices():
     dynamodb = boto3.resource(
         'dynamodb', endpoint_url="http://localhost:8000")
     # Specify the table to scan
-    devices_table = dynamodb.Table('Devices')
+    devices_table = dynamodb.Table('Users')
     response = devices_table.scan()
     print(response)
     items = response['Items']
@@ -131,11 +154,11 @@ def scan_devices():
 
 
 if __name__ == '__main__':
-    # device_table = create_devices_table()
-    # Print table status
+    # device_table = create_user_table()
+    # # Print table status
     # print("Status:", device_table.table_status)
-
-    # with open("../data.json") as json_file:
+    #
+    # with open("../userdata.json") as json_file:
     #     device_list = json.load(json_file, parse_float=Decimal)
     # load_data(device_list)
 
@@ -145,11 +168,11 @@ if __name__ == '__main__':
     # # Print response
     # pprint(device_resp)
 
-    device = get_device("10001", 3, )
-    if device:
+    user = get_user_account("bwlee13")
+    if user:
         print("Get Device Data Done:")
         # Print the data read
-        print(device)
+        print(user)
 
     # scan_devices()
 

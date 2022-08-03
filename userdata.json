@@ -1,0 +1,43 @@
+[
+  {
+    "userId": "bwlee13",
+    "firstName": "Brandon",
+    "lastName": "Lee",
+    "bookList": [["978-0349411903", "R"], ["978-1612681122", "A"], ["978-0735213616", "Q"]],
+    "followerList": ["lubyj.tyler", "teejaylee"],
+    "followingList": ["lubyj.tyler", "teejaylee"],
+    "acctData": {
+      "createdOn": "2022-07-19 09:26:03.478039",
+      "lastUpdatedOn": "2022-07-19 09:26:03.478039",
+      "password": "7bc4ee255d838fcd33d4f1aeade8e9f24ee8dbe9fe0022eaf727607f8d88a1df"
+    }
+  },
+  {
+    "userId": "lubyj.tyler",
+    "firstName": "Tyler",
+    "lastName": "Luby",
+    "bookList": [["978-0349411903", "R"], ["978-0735211292", "A"], ["978-1523505746", "Q"]],
+    "followerList": ["bwlee13"],
+    "followingList": ["bwlee13", "teejaylee"],
+    "acctData": {
+      "createdOn": "2022-07-19 09:26:03.478039",
+      "lastUpdatedOn": "2022-07-19 09:26:03.478039",
+      "password": "008c70392e3abfbd0fa47bbc2ed96aa99bd49e159727fcba0f2e6abeb3a9d601"
+    }
+  },
+   {
+    "userId": "teejaylee",
+    "firstName": "Taylor",
+    "lastName": "Buchanan",
+    "bookList": [["978-0349411903", "R"], ["978-0349411903", "R"], ["978-1612681122", "A"],
+                  ["978-0735211292", "A"], ["978-1523505746", "Q"]],
+    "followerList": ["bwlee13", "lubyj.tyler"],
+    "followingList": ["bwlee13"],
+    "acctData": {
+      "createdOn": "2022-07-19 09:26:03.478039",
+      "lastUpdatedOn": "2022-07-19 09:26:03.478039",
+      "password": "c2d214a484e9d44d34c0c26cca27b34d0eca755d7d7341549885efc7ef592425"
+
+    }
+  }
+]
