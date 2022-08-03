@@ -20,3 +20,4 @@ async def signup(data: NewUser):
     password = data.password
 
     return ("You signed up with: ", first_name, last_name, user_id, email, password)
+
